@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="../static/style.css" />
+    <title>Calorie Tracking</title>
+  </head>
+  <body>
+    <div class="container">
+      <form action="/submit" method="POST">
+        <div class="form-group">
+          <p style="font-size: 1.2rem"><b> Calorie Tracking </b></p>
+          <p style="font-size:0.8rem"> Choose and Submit </p>
+          <input type="radio" name="kalorier" value="100" checked="checked"/> 100&nbsp;&nbsp;&nbsp;&nbsp;
+          <input type="radio" name="kalorier" value="500" /> 500
+          <input type="submit" value="Submit" class="btn"/>
+        </div> 
+      </form>
+      <form action=min_data>
+        <input type="submit" value="Data" class="btn"/>
+      </form> 
+      <div class="fodnoter">
+      <br>
+      <p><b> Purpose of app </b> 
+      <p> Fast calorie tracking </p>
+      <p> <b>Prerequisites</b> </p>
+      <p> Mfp / Lifesum exp</p>
+      <p><b> Readme, code etc.: </b><p>
+      <p><a href="https://github.com/KristianMeier/krmetest.git">Github</a></p>
+      </div>
+    </div>
+  </body>
+</html>
