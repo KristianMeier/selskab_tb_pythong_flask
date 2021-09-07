@@ -11,8 +11,12 @@
 <table class="center">
   <thead>
     <tr>
-        <th>Date</th>
-        <th>Calories</th>
+        <th>type</th>
+        <th>bilag</th>
+        <th>dato</th>
+        <th>tekst</th>
+        <th>konto</th>
+        <th>momskode</th>
     </tr>
     </thead>    
     <tbody>
@@ -20,6 +24,10 @@
             <tr>
                 <td>{{row[0]}}</td>
                 <td>{{row[1]}}</td>
+                <td>{{row[2]}}</td>
+                <td>{{row[3]}}</td>
+                <td>{{row[4]}}</td>
+                <td>{{row[5]}}</td>
             </tr>
         {% endfor %}
     </tbody>
