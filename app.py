@@ -53,6 +53,13 @@ def min_data():
     return render_template('min_data.html', data=data)
 
 
+@app.route('/min_data')
+def min_data2():
+    mycursor.execute("SELECT * from TB_Dinero6 limit 10;")
+    data2 = mycursor.fetchall()
+    return render_template('min_data.html', data=data2)
+
+
 @app.route('/submit', methods=['POST'])
 def submit():
     if request.method == 'POST':

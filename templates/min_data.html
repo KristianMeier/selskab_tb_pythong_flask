@@ -31,6 +31,26 @@
             </tr>
         {% endfor %}
     </tbody>
+
+    <p style="font-size: 1.2rem"><b> Mellemrum</b></p>
+
+    <table class="center">
+        <thead>
+            <tr>
+                <th>konto</th>
+                <th>kontonavn</th>
+                <th>beløb</th>
+            </tr>
+        </thead>
+    <tbody>
+     {% for row in data2 %}
+            <tr>
+                <td>{{row[0]}}</td>
+                <td>{{row[1]}}</td>
+                <td>{{row[2]}}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
     <div class="container">
     <form action="/">
     	<input type="submit" value="Back" class="button"/>
