@@ -28,10 +28,10 @@ def min_data():
     return render_template('min_data.html', data=data)
 
 @app.route('/min_data2')
-def min_data2():
+def min_data():
     mycursor.execute("SELECT * from din limit 10;")
-    data2 = mycursor.fetchall()
-    return render_template('min_data2.html', data=data2)
+    data = mycursor.fetchall()
+    return render_template('min_data2.html', data=data)
 
 if __name__ == '__main__':
     app.run()
