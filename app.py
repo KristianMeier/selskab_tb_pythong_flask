@@ -28,7 +28,6 @@ def formatDataframe(df):
     mycursor.execute("SELECT * from mytable;")
     df_db = DataFrame(mycursor.fetchall(), columns=['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode'])
 
-    """PART2: CLEAN RECEIVED DATA, MAKE IT READY FOR JOIN"""
     df.dropna(how='all', axis=1, inplace=True)  # Delete empty columns (til economic)
     df.columns = ['fKontonr', 'tekst', 'debet']  # rename Columns
     df["tekst"] = df["tekst"].str.lower()  # Python seems to be case-sensitive from using join.
@@ -39,7 +38,6 @@ def formatDataframe(df):
     df = df[~df['tekst'].str.endswith('i alt', 'oresultat')]
     df.drop(df[(df['debet'] == '-44.444,00')].index, inplace=True)  # drop lines where amount = 0 (economic)
 
-    """PART3: JOINS (DB, CLEAN DATA) AND FILLS TEMPLATE"""
     df_m = pd.merge(df, df_db, on='tekst', how='left')  # Left-join with db
     df_m = df_m.assign(Type="F", Bilag=1)  # Fill date for all rows
     df_m.drop('fKontonr', axis=1, inplace=True)  # Drop foreign account no.
@@ -51,26 +49,16 @@ def formatDataframe(df):
 def index():
     return render_template('index.html')
 
-@app.route('/min_data')
-def min_data():
-    mycursor.execute("SELECT * from mytable limit 10;")
-    data = mycursor.fetchall()
-    return render_template('min_data.html', data=data)
-
 @app.route('/upload', methods=['POST'])
 def upload_csv():
     file = request.files.get('file')
-
     df = pd.read_csv(file, sep=';')
-
     df = formatDataframe(df)
 
-    # Note
     output = StringIO()
-    df.to_csv(output,index=False)
+    df.to_csv(output,index=False, sep=';')
 
     resp = Response(output.getvalue(), mimetype="text/csv")
-
     resp.headers["Content-Disposition"] = "attachment; filename=\"super.csv\""
 
     return resp
