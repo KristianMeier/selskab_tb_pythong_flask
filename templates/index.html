@@ -9,7 +9,10 @@
   </head>
   <body>
     <div class="container">
-      <input type="button" class="button" value="Upload TB" onclick="alert('Under udarbejdelse')">
+      <form action="upload" method="POST" enctype="multipart/form-data">
+        <input type="file" class="button" name="file" value="Upload TB">
+        <button type="submit">Upload</button>
+      </form>
       <a href="./min_data?" class="button">Test DB</a>
       <p><a href="https://github.com/KristianMeier/krmetest.git">Github</a></p>
     </div>
