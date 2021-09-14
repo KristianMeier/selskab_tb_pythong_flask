@@ -6,6 +6,6 @@ Kun muligt at vælge CSV filer.
 Tilføj guide. Eller link til guide
 
 # Version 2
-- Tilføj 2nd database for (EMV and ApS split)
-- Create Login
-- Lav %søgeord% opslag i database
+Tilføj 2nd database for (EMV and ApS split)
+Create Login
+
