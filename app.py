@@ -40,6 +40,8 @@ def formatDataframe(df):
 
     df_m = pd.merge(df, df_db, on='tekst', how='left')  # Left-join with db
     df_m = df_m.assign(Type="F", Bilag=1)  # Fill date for all rows
+    df_m.drop(df_m[(df_m['debet'] == 0)].index, inplace=True)  # Fix 26/08, da der kommer nulværdier i output. 
+    df_m.dropna(subset=['debet'], inplace=True)  # Sletter tomme NaN felter
     df_m.drop('fKontonr', axis=1, inplace=True)  # Drop foreign account no.
     df_m = df_m[['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode', 'debet']]  # Sort rows for Meneto
 
@@ -59,7 +61,7 @@ def upload_csv():
     df.to_csv(output,index=False, sep=';')
 
     resp = Response(output.getvalue(), mimetype="text/csv")
-    resp.headers["Content-Disposition"] = "attachment; filename=\"super.csv\""
+    resp.headers["Content-Disposition"] = "attachment; filename=\"saaaldo.csv\""
 
     return resp
 

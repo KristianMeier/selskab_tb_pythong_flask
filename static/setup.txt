@@ -1,0 +1,13 @@
+Setup.txt
+
+# Prep for Scriptet kan køres
+0. Skift til Semikolon-sepereret csv'er (når der gemmes i Excel): 
+   https://www.koskila.net/how-to-change-the-delimiter-when-exporting-csv-from-excel/
+1. Åben Excel. Slet de øverste rækker, så Data-split dur
+2. Convert Data (Vælg "Text"), så den ikke autoformatter til dato etc.
+3. Slet kolloner der ikke skal bruges
+4. 4.1 Husk at sætte Excel comma-seperator til Punktum (dansk har typisk comma) 
+   Excel -> Options -> Advanced -> Ontick"Use system seperators". Skift dem rundt.
+5. Hust at der skal gemmes som UTF, for at python kan læse det.
+6. Husk at sætte data format til dd-mm-yyyy (excel converterer det ellers, selv om det kommer 31-12-2020 fra python)
+   Control Panel -> "Change date, time and number formats" -> Vælg "Dansih(Danmark)". Vælg dd-mm-yyyy
