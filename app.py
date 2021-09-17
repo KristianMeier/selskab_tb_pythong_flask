@@ -44,6 +44,7 @@ def minPandaFunktion(df):
     df_m.dropna(subset=['debet'], inplace=True)   # Høker Bugfix 26/08. Undersøg.
     df_m.drop('fKontonr', axis=1, inplace=True)
     df_m = df_m[['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode', 'debet']]  # Sort rows for Meneto
+    df_m = df_m.drop_duplicates()
 
     return df_m
 
