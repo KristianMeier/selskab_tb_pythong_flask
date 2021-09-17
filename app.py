@@ -25,7 +25,7 @@ db = SQLAlchemy(app)
 
 
 def minPandaFunktion(df):
-    mycursor.execute("SELECT * from mytable;")
+    mycursor.execute("SELECT * from selskab;")
     df_db = DataFrame(mycursor.fetchall(), columns=['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode'])
 
     df.dropna(how='all', axis=1, inplace=True)  # Delete empty columns (economic specific)
