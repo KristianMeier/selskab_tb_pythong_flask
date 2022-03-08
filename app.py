@@ -22,6 +22,11 @@ conn = psycopg2.connect(database="dc8mlg3f6b65g6",
 mycursor = conn.cursor()
 SQLAlchemy(app)
 
+def load_input_csv_dataframe():
+    minCsvVariabel = request.files.get('minInputFil') 
+    df = pd.read_csv(minCsvVariabel, sep=';')
+    return(df)
+
 def load_data_from_sql_database_into_dataframe(mycursor):
     mycursor.execute("SELECT * from selskab;")
     df_db = DataFrame(mycursor.fetchall(), columns=['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode'])
@@ -60,11 +65,8 @@ def index():
     return render_template('index.html')
 
 @app.route('/minKonvertRute', methods=['POST'])
-def load_convert_and_output_csv():
-    '''Indlæs CSV i Pandaframe'''
-    minCsvVariabel = request.files.get('minInputFil') 
-    df = pd.read_csv(minCsvVariabel, sep=';')
-    
+def load_input_convert_and_download_converted_csv():
+    df = load_input_csv_dataframe():
     df_db = load_data_from_sql_database_into_dataframe(mycursor)
     df = clean_data_and_prepare_for_merge(df)
     df = merge_acc_knowledge_dataframe_with_csv_dataframe(df, df_db)
