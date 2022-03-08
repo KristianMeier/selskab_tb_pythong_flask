@@ -21,7 +21,7 @@ conn = psycopg2.connect(database="dc8mlg3f6b65g6",
 
 mycursor = conn.cursor()
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+SQLAlchemy(app)
 
 def clean_data_and_prepare_for_merge(df):
     df.dropna(how='all', axis=1, inplace=True)  # Delete empty columns (economic specific)
