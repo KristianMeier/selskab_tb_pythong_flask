@@ -49,7 +49,7 @@ def minPandaFunktion(df):
     df_db = DataFrame(mycursor.fetchall(), columns=['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode'])
     
     df = clean_data_and_prepare_for_merge(df)
-    df = merge_acc_knowledge_dataframe_with_csv_dataframe(df)
+    df = merge_acc_knowledge_dataframe_with_csv_dataframe(df, df_db)
     return(df)
 
 @app.route('/')
