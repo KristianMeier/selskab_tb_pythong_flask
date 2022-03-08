@@ -51,9 +51,9 @@ def merge_acc_knowledge_dataframe_with_csv_dataframe(df, df_db):
 def convert_dataframe_to_csv_and_download(df):
     mitOutput = StringIO()
     df.to_csv(mitOutput,index=False, sep=';')
-    mitResp = Response(mitOutput.getvalue(), mimetype="text/csv")
-    mitResp.headers["Content-Disposition"] = "attachment; filename=\"saaaldo.csv\""
-    return mitResp
+    output_csv_file = Response(mitOutput.getvalue(), mimetype="text/csv")
+    output_csv_file.headers["Content-Disposition"] = "attachment; filename=\"saaaldo.csv\""
+    return(output_csv_file)
 
 @app.route('/')
 def index():
@@ -68,7 +68,8 @@ def load_convert_and_output_csv():
     df_db = load_data_from_sql_database_into_dataframe(mycursor)
     df = clean_data_and_prepare_for_merge(df)
     df = merge_acc_knowledge_dataframe_with_csv_dataframe(df, df_db)
-    convert_dataframe_to_csv_and_download(df)
+    output_csv_file = convert_dataframe_to_csv_and_download(df)
+    return output_csv_file
     
 if __name__ == '__main__':
     app.run()
