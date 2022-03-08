@@ -10,7 +10,6 @@ import numpy as np
 
 app = Flask(__name__)
 
-
 app.debug = True
 app.config[
     'SQLALCHEMY_DATABASE_URI'] = 'postgresql://hvaodzwnooceta:49698aa339a5e4a3ff8743ed59a43cab2baee8d3c1180bd2594a'\
@@ -24,11 +23,7 @@ mycursor = conn.cursor()
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-def load_acc_knowledge_table_into_dataframe_array():
-    mycursor.execute("SELECT * from selskab;")
-    df_db = DataFrame(mycursor.fetchall(), columns=['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode'])
-    
-def clean_data_and_prepare_for_merge():
+def clean_data_and_prepare_for_merge(df):
     df.dropna(how='all', axis=1, inplace=True)  # Delete empty columns (economic specific)
     df.columns = ['fKontonr', 'tekst', 'debet']
     df["tekst"] = df["tekst"].str.lower()  # Python seems to be case-sensitive from using join.
@@ -37,21 +32,25 @@ def clean_data_and_prepare_for_merge():
     df.drop(df[(df['debet'] == 0) | (df['debet'] == '0,00')].index, inplace=True)
     df.drop(df[(df['debet'] == '0') | (df['debet'] == '-0')].index, inplace=True)
     df = df[~df['tekst'].str.endswith('i alt', 'oresultat')]
+    return(df)
 
-def merge_acc_knowledge_dataframe_with_csv_dataframe():
-    df_m = pd.merge(df, df_db, on='tekst', how='left')
-    df_m = df_m.assign(type="F", bilag=1)
-    df_m.drop(df_m[(df_m['debet'] == 0)].index, inplace=True)  # Høker Bugfix 26/08. Undersøg.
-    df_m.dropna(subset=['debet'], inplace=True)   # Høker Bugfix 26/08. Undersøg.
-    df_m.drop('fKontonr', axis=1, inplace=True)
-    df_m = df_m[['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode', 'debet']]  # Sort rows for Meneto
-    df_m = df_m.drop_duplicates()
-
+def merge_acc_knowledge_dataframe_with_csv_dataframe(df):
+    df = pd.merge(df, df_db, on='tekst', how='left')
+    df = df.assign(type="F", bilag=1)
+    df.drop(df[(df['debet'] == 0)].index, inplace=True)  # Høker Bugfix 26/08. Undersøg.
+    df.dropna(subset=['debet'], inplace=True)   # Høker Bugfix 26/08. Undersøg.
+    df.drop('fKontonr', axis=1, inplace=True)
+    df = df[['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode', 'debet']]  # Sort rows for Meneto
+    df = df.drop_duplicates()
+    return df
+    
 def minPandaFunktion(df):
-    load_acc_knowledge_table_into_dataframe_array()
-    clean_data_and_prepare_for_merge()
-    merge_acc_knowledge_dataframe_with_csv_dataframe()
-    return df_m
+    mycursor.execute("SELECT * from selskab;")
+    df_db = DataFrame(mycursor.fetchall(), columns=['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode'])
+    
+    df = clean_data_and_prepare_for_merge(df)
+    df = merge_acc_knowledge_dataframe_with_csv_dataframe(df)
+    return df
 
 @app.route('/')
 def index():
