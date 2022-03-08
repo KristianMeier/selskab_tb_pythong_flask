@@ -10,17 +10,13 @@ import numpy as np
 
 app = Flask(__name__)
 
-app.debug = True
-app.config[
-    'SQLALCHEMY_DATABASE_URI'] = 'postgresql://hvaodzwnooceta:49698aa339a5e4a3ff8743ed59a43cab2baee8d3c1180bd2594a'\
-                                 'c66cf8f9591c@ec2-34-249-247-7.eu-west-1.compute.amazonaws.com:5432/dc8mlg3f6b65g6'
 conn = psycopg2.connect(database="dc8mlg3f6b65g6",
                         user="hvaodzwnooceta",
                         password="49698aa339a5e4a3ff8743ed59a43cab2baee8d3c1180bd2594ac66cf8f9591c",
                         host="ec2-34-249-247-7.eu-west-1.compute.amazonaws.com")
-
-mycursor = conn.cursor()
 SQLAlchemy(app)
+mycursor = conn.cursor()
+
 
 def load_uploaded_csv_into_dataframe(uploaded_csv):
     df = pd.read_csv(uploaded_csv, sep=';')
