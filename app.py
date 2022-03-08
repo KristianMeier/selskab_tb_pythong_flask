@@ -55,11 +55,9 @@ def load_convert_and_output_csv(df):
     return(df)
 
 @app.route('/')
-def index():
     return render_template('index.html')
 
 @app.route('/minKonvertRute', methods=['POST'])
-def minKonvFunktion():
     '''Indlæs CSV i Pandaframe'''
     minCsvVariabel = request.files.get('minInputFil') 
     df = pd.read_csv(minCsvVariabel, sep=';')
