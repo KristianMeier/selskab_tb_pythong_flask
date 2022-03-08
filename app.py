@@ -11,18 +11,16 @@ import numpy as np
 app = Flask(__name__)
 SQLAlchemy(app)
 
-conn = psycopg2.connect(database="dc8mlg3f6b65g6", user="hvaodzwnooceta", password="49698aa339a5e4a3ff8743ed59a43cab2baee8d3c1180bd2594ac66cf8f9591c",
-                        host="ec2-34-249-247-7.eu-west-1.compute.amazonaws.com")
-mycursor = conn.cursor()
+def load_data_from_sql_database_into_dataframe():
+    conn = psycopg2.connect(database="dc8mlg3f6b65g6", user="hvaodzwnooceta", password="49698aa339a5e4a3ff8743ed59a43cab2baee8d3c1180bd2594ac66cf8f9591c", host="ec2-34-249-247-7.eu-west-1.compute.amazonaws.com")
+    mycursor = conn.cursor()
+    mycursor.execute("SELECT * from selskab;")
+    df_db = DataFrame(mycursor.fetchall(), columns=['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode'])
+    return(df_db)
 
 def load_uploaded_csv_into_dataframe(uploaded_csv):
     df = pd.read_csv(uploaded_csv, sep=';')
     return(df)
-
-def load_data_from_sql_database_into_dataframe(mycursor):
-    mycursor.execute("SELECT * from selskab;")
-    df_db = DataFrame(mycursor.fetchall(), columns=['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode'])
-    return(df_db)
 
 def clean_data_and_prepare_for_merge(df):
     df.dropna(how='all', axis=1, inplace=True)  # Delete empty columns (economic specific)
@@ -58,9 +56,9 @@ def index():
 
 @app.route('/import_convert_download_route', methods=['POST'])
 def load_input_convert_and_download_converted_csv():
-    uploaded_csv = request.files.get('inputfile_html_attribute') 
+    uploaded_csv = request.files.get('inputfile_html_attribute')
+    df_db = load_data_from_sql_database_into_dataframe()
     df = load_uploaded_csv_into_dataframe(uploaded_csv)
-    df_db = load_data_from_sql_database_into_dataframe(mycursor)
     df = clean_data_and_prepare_for_merge(df)
     df = merge_acc_knowledge_dataframe_with_csv_dataframe(df, df_db)
     output_csv_file = convert_dataframe_to_csv_and_download(df)
