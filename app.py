@@ -10,24 +10,25 @@ import numpy as np
 
 app = Flask(__name__)
 
-app.debug = True
-app.config[
-    'SQLALCHEMY_DATABASE_URI'] = 'postgresql://hvaodzwnooceta:49698aa339a5e4a3ff8743ed59a43cab2baee8d3c1180bd2594a'\
-                                 'c66cf8f9591c@ec2-34-249-247-7.eu-west-1.compute.amazonaws.com:5432/dc8mlg3f6b65g6'
-conn = psycopg2.connect(database="dc8mlg3f6b65g6",
-                        user="hvaodzwnooceta",
-                        password="49698aa339a5e4a3ff8743ed59a43cab2baee8d3c1180bd2594ac66cf8f9591c",
-                        host="ec2-34-249-247-7.eu-west-1.compute.amazonaws.com")
+def connect_to_database_with_acc_knowledge():
+    app.debug = True
+    app.config[
+        'SQLALCHEMY_DATABASE_URI'] = 'postgresql://hvaodzwnooceta:49698aa339a5e4a3ff8743ed59a43cab2baee8d3c1180bd2594a'\
+                                     'c66cf8f9591c@ec2-34-249-247-7.eu-west-1.compute.amazonaws.com:5432/dc8mlg3f6b65g6'
+    conn = psycopg2.connect(database="dc8mlg3f6b65g6",
+                            user="hvaodzwnooceta",
+                            password="49698aa339a5e4a3ff8743ed59a43cab2baee8d3c1180bd2594ac66cf8f9591c",
+                            host="ec2-34-249-247-7.eu-west-1.compute.amazonaws.com")
 
-mycursor = conn.cursor()
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+    mycursor = conn.cursor()
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    db = SQLAlchemy(app)
 
-
-def minPandaFunktion(df):
+def load_acc_knowledge_table_into_dataframe_array():
     mycursor.execute("SELECT * from selskab;")
     df_db = DataFrame(mycursor.fetchall(), columns=['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode'])
-
+    
+def clean_data_and_prepare_for_merge():
     df.dropna(how='all', axis=1, inplace=True)  # Delete empty columns (economic specific)
     df.columns = ['fKontonr', 'tekst', 'debet']
     df["tekst"] = df["tekst"].str.lower()  # Python seems to be case-sensitive from using join.
@@ -36,8 +37,8 @@ def minPandaFunktion(df):
     df.drop(df[(df['debet'] == 0) | (df['debet'] == '0,00')].index, inplace=True)
     df.drop(df[(df['debet'] == '0') | (df['debet'] == '-0')].index, inplace=True)
     df = df[~df['tekst'].str.endswith('i alt', 'oresultat')]
-    df.drop(df[(df['debet'] == '-44.444,00')].index, inplace=True)  # (economic specific)
 
+def merge_acc_knowledge_dataframe_with_csv_dataframe():
     df_m = pd.merge(df, df_db, on='tekst', how='left')
     df_m = df_m.assign(type="F", bilag=1)
     df_m.drop(df_m[(df_m['debet'] == 0)].index, inplace=True)  # Høker Bugfix 26/08. Undersøg.
@@ -46,6 +47,11 @@ def minPandaFunktion(df):
     df_m = df_m[['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode', 'debet']]  # Sort rows for Meneto
     df_m = df_m.drop_duplicates()
 
+def minPandaFunktion(df):
+    connect_to_database_with_acc_knowledge() #The data is only used by this function. Normally database is used in more function, so it is done outside og a function.
+    load_acc_knowledge_table_into_dataframe_array()
+    clean_data_and_prepare_for_merge()
+    merge_acc_knowledge_dataframe_with_csv_dataframe()
     return df_m
 
 @app.route('/')
