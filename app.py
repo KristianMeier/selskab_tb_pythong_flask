@@ -42,7 +42,7 @@ def merge_acc_knowledge_dataframe_with_csv_dataframe(df):
     df.drop('fKontonr', axis=1, inplace=True)
     df = df[['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode', 'debet']]  # Sort rows for Meneto
     df = df.drop_duplicates()
-    return df
+    return(df)
     
 def minPandaFunktion(df):
     mycursor.execute("SELECT * from selskab;")
@@ -50,7 +50,7 @@ def minPandaFunktion(df):
     
     df = clean_data_and_prepare_for_merge(df)
     df = merge_acc_knowledge_dataframe_with_csv_dataframe(df)
-    return df
+    return(df)
 
 @app.route('/')
 def index():
