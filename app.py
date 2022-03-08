@@ -20,7 +20,6 @@ conn = psycopg2.connect(database="dc8mlg3f6b65g6",
                         host="ec2-34-249-247-7.eu-west-1.compute.amazonaws.com")
 
 mycursor = conn.cursor()
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 SQLAlchemy(app)
 
 def clean_data_and_prepare_for_merge(df):
