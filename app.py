@@ -47,23 +47,20 @@ def merge_acc_knowledge_dataframe_with_csv_dataframe(df, df_db):
     df = df[['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode', 'debet']]  # Sort rows for Meneto
     df = df.drop_duplicates()
     return(df)
-    
-def load_convert_and_output_csv(df):
-    df_db = load_data_from_sql_database_into_dataframe(mycursor)
-    df = clean_data_and_prepare_for_merge(df)
-    df = merge_acc_knowledge_dataframe_with_csv_dataframe(df, df_db)
-    return(df)
 
 @app.route('/')
+def index():
     return render_template('index.html')
 
 @app.route('/minKonvertRute', methods=['POST'])
+def load_convert_and_output_csv(df):
     '''Indlæs CSV i Pandaframe'''
     minCsvVariabel = request.files.get('minInputFil') 
     df = pd.read_csv(minCsvVariabel, sep=';')
     
-    '''Converter Input til Output'''
-    df = load_convert_and_output_csv(df)
+    df_db = load_data_from_sql_database_into_dataframe(mycursor)
+    df = clean_data_and_prepare_for_merge(df)
+    df = merge_acc_knowledge_dataframe_with_csv_dataframe(df, df_db)
 
     '''Download Csv'''
     mitOutput = StringIO()
