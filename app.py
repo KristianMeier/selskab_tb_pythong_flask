@@ -9,6 +9,7 @@ from werkzeug.utils import send_file
 import numpy as np
 
 app = Flask(__name__)
+
 app.debug = True
 app.config[
     'SQLALCHEMY_DATABASE_URI'] = 'postgresql://hvaodzwnooceta:49698aa339a5e4a3ff8743ed59a43cab2baee8d3c1180bd2594a'\
@@ -17,13 +18,9 @@ conn = psycopg2.connect(database="dc8mlg3f6b65g6",
                         user="hvaodzwnooceta",
                         password="49698aa339a5e4a3ff8743ed59a43cab2baee8d3c1180bd2594ac66cf8f9591c",
                         host="ec2-34-249-247-7.eu-west-1.compute.amazonaws.com")
+
 mycursor = conn.cursor()
 SQLAlchemy(app)
-
-def load_data_from_sql_db_into_dataframe(df_db):
-    mycursor.execute("SELECT * from selskab;")
-    df_db = DataFrame(mycursor.fetchall(), columns=['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode'])
-    return(df_db)
 
 def clean_data_and_prepare_for_merge(df):
     df.dropna(how='all', axis=1, inplace=True)  # Delete empty columns (economic specific)
@@ -46,8 +43,10 @@ def merge_acc_knowledge_dataframe_with_csv_dataframe(df, df_db):
     df = df.drop_duplicates()
     return(df)
     
-def convert_input_data_to_output_data(df):
-    df_db = load_data_from_sql_db_into_dataframe(df_db)
+def minPandaFunktion(df):
+    mycursor.execute("SELECT * from selskab;")
+    df_db = DataFrame(mycursor.fetchall(), columns=['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode'])
+    
     df = clean_data_and_prepare_for_merge(df)
     df = merge_acc_knowledge_dataframe_with_csv_dataframe(df, df_db)
     return(df)
@@ -58,15 +57,19 @@ def index():
 
 @app.route('/minKonvertRute', methods=['POST'])
 def minKonvFunktion():
-    csv_contents = request.files.get('minInputFil') 
-    df = pd.read_csv(csv_contents, sep=';')
-    df = convert_input_data_to_output_data(df)
+    '''Indlæs CSV i Pandaframe'''
+    minCsvVariabel = request.files.get('minInputFil') 
+    df = pd.read_csv(minCsvVariabel, sep=';')
     
-    min_output_stream = StringIO()
-    df.to_csv(min_output_stream,index=False, sep=';')
-    min_output_csv_fil = Response(min_output_stream.getvalue(), mimetype="text/csv")
-    min_output_csv_fil.headers["Content-Disposition"] = "attachment; filename=\"saaaldo.csv\""
-    return min_output_csv_fil
+    '''Converter Input til Output'''
+    df = minPandaFunktion(df)
+
+    '''Download Csv'''
+    mitOutput = StringIO()
+    df.to_csv(mitOutput,index=False, sep=';')
+    mitResp = Response(mitOutput.getvalue(), mimetype="text/csv")
+    mitResp.headers["Content-Disposition"] = "attachment; filename=\"saaaldo.csv\""
+    return mitResp
 
 if __name__ == '__main__':
     app.run()
