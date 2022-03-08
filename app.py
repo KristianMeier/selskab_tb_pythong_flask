@@ -22,6 +22,11 @@ conn = psycopg2.connect(database="dc8mlg3f6b65g6",
 mycursor = conn.cursor()
 SQLAlchemy(app)
 
+def load_data_from_sql_database_into_dataframe(mycursor):
+    mycursor.execute("SELECT * from selskab;")
+    df_db = DataFrame(mycursor.fetchall(), columns=['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode'])
+    return(df_db)
+
 def clean_data_and_prepare_for_merge(df):
     df.dropna(how='all', axis=1, inplace=True)  # Delete empty columns (economic specific)
     df.columns = ['fKontonr', 'tekst', 'debet']
@@ -43,10 +48,8 @@ def merge_acc_knowledge_dataframe_with_csv_dataframe(df, df_db):
     df = df.drop_duplicates()
     return(df)
     
-def minPandaFunktion(df):
-    mycursor.execute("SELECT * from selskab;")
-    df_db = DataFrame(mycursor.fetchall(), columns=['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode'])
-    
+def load_convert_and_output_csv(df):
+    df_db = load_data_from_sql_database_into_dataframe(mycursor)
     df = clean_data_and_prepare_for_merge(df)
     df = merge_acc_knowledge_dataframe_with_csv_dataframe(df, df_db)
     return(df)
@@ -62,7 +65,7 @@ def minKonvFunktion():
     df = pd.read_csv(minCsvVariabel, sep=';')
     
     '''Converter Input til Output'''
-    df = minPandaFunktion(df)
+    df = load_convert_and_output_csv(df)
 
     '''Download Csv'''
     mitOutput = StringIO()
