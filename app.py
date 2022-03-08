@@ -57,7 +57,7 @@ def index():
     return render_template('index.html')
 
 @app.route('/minKonvertRute', methods=['POST'])
-def convert_foreign_tb_to_meneto_tb():
+def minKonvFunktion():
     csv_contents = request.files.get('minInputFil') 
     df = pd.read_csv(csv_contents, sep=';')
     df = convert_input_data_to_output_data(df)
@@ -65,7 +65,7 @@ def convert_foreign_tb_to_meneto_tb():
     min_output_stream = StringIO()
     df.to_csv(min_output_stream,index=False, sep=';')
     min_output_csv_fil = Response(min_output_stream.getvalue(), mimetype="text/csv")
-    min_output_csv_fil.headers["Content-Disposition"] = "attachment; filename=\"saldobalance_output.csv\""
+    min_output_csv_fil.headers["Content-Disposition"] = "attachment; filename=\"saaaldo.csv\""
     return min_output_csv_fil
 
 if __name__ == '__main__':
