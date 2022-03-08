@@ -34,7 +34,7 @@ def clean_data_and_prepare_for_merge(df):
     df = df[~df['tekst'].str.endswith('i alt', 'oresultat')]
     return(df)
 
-def merge_acc_knowledge_dataframe_with_csv_dataframe(df):
+def merge_acc_knowledge_dataframe_with_csv_dataframe(df, db_df):
     df = pd.merge(df, df_db, on='tekst', how='left')
     df = df.assign(type="F", bilag=1)
     df.drop(df[(df['debet'] == 0)].index, inplace=True)  # Høker Bugfix 26/08. Undersøg.
