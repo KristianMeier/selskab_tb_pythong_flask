@@ -1,0 +1,4 @@
+Indsæt dato
+ved sammenlignignsår, flip fortegn, og slet drift.
+Ved standard tb, flip fortegn på passiver og drift
+Ved billy, slet x99 og x00 kontoer. Kan ikke kodes ind, da det kan fucke non-billy
