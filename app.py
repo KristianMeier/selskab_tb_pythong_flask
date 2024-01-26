@@ -3,16 +3,19 @@ from flask import Flask, render_template, request, make_response
 from flask.wrappers import Response
 from flask_sqlalchemy import SQLAlchemy
 from pandas.core.frame import DataFrame
-import psycopg2
 import pandas as pd
 from werkzeug.utils import send_file
 import numpy as np
+import sqlite3  # Import sqlite3 for SQLite operations
 
 app = Flask(__name__)
+# Configure the SQLite database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///mydatabase.db'  # Change to your SQLite DB path
 SQLAlchemy(app)
 
 def load_data_from_sql_database_into_dataframe():
-    conn = psycopg2.connect(database="dc8mlg3f6b65g6", user="hvaodzwnooceta", password="49698aa339a5e4a3ff8743ed59a43cab2baee8d3c1180bd2594ac66cf8f9591c", host="ec2-34-249-247-7.eu-west-1.compute.amazonaws.com")
+    # Connect to SQLite database
+    conn = sqlite3.connect('mydatabase.db')  # Change to your SQLite DB path
     mycursor = conn.cursor()
     mycursor.execute("SELECT * from selskab;")
     df_db = DataFrame(mycursor.fetchall(), columns=['type', 'bilag', 'dato', 'tekst', 'konto', 'momskode'])
